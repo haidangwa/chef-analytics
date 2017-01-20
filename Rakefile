@@ -1,5 +1,7 @@
 #!/usr/bin/env rake
 
+require_relative 'tasks/maintainers'
+
 # Style tests. cookstyle (rubocop) and Foodcritic
 namespace :style do
   begin
@@ -19,7 +21,7 @@ namespace :style do
     FoodCritic::Rake::LintTask.new(:chef) do |t|
       t.options = {
         fail_tags: ['any'],
-        progress: true
+        progress: true,
       }
     end
   rescue LoadError
@@ -47,8 +49,8 @@ namespace :integration do
 
     desc 'Run kitchen integration tests'
     Kitchen::RakeTasks.new
-  rescue LoadError => e
-    puts ">>> Gem load error: #{e}, omitting #{task.name}" unless ENV['CI']
+  rescue StandardError => e
+    puts ">>> Kitchen error: #{e}, omitting #{task.name}" unless ENV['CI']
   end
 end
 
